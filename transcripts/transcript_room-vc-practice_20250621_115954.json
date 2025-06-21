@@ -1,0 +1,13 @@
+{
+  "items": [
+    {
+      "id": "item_6f49fe11bf8e",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Thank you for coming in"
+      ],
+      "interrupted": true
+    }
+  ]
+}

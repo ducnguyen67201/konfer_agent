@@ -1,9 +1,11 @@
-from fastapi import FastAPI, Query, HTTPException
+from fastapi import FastAPI, Query, HTTPException, Body
 from fastapi.middleware.cors import CORSMiddleware
 from livekit import api
 from dotenv import load_dotenv
 import os
 import json
+from database.mongodb import MongoConnector
+from bson import json_util, ObjectId
 
 load_dotenv(dotenv_path=".env.local")
 
@@ -70,3 +72,71 @@ async def get_transcript_on_room(room_name: str):
         raise HTTPException(
             status_code=500, detail=f"Error reading transcript: {str(e)}"
         )
+
+
+@app.post("/transcript/test")
+async def test_transcript(room_name: str = Query(...), transcript: dict = Body(...)):
+    """Test the transcript endpoint
+
+    Args:
+        room_name: The name of the room for the transcript
+        transcript: The transcript data to store
+    """
+    mongo = MongoConnector()
+    transcript_collection = mongo.get_collection("transcripts")
+    result = await transcript_collection.insert_one(transcript)
+    return {"message": "Transcript endpoint is working", "id": str(result.inserted_id)}
+
+
+@app.get("/transcripts")
+async def get_all_transcripts():
+    """Get all transcripts from the database (only id, call_id, and timestamp)"""
+    mongo = MongoConnector()
+    transcript_collection = mongo.get_collection("transcripts")
+
+    # Project only _id, call_id, and timestamp fields
+    cursor = transcript_collection.find({}, {"_id": 1, "call_id": 1, "timestamp": 1})
+    transcripts = await cursor.to_list(length=100)
+
+    # Clean up and reformat
+    cleaned = [
+        {
+            "id": str(item["_id"]),
+            "call_id": item.get("call_id"),
+            "timestamp": (
+                item.get("timestamp").isoformat() if item.get("timestamp") else None
+            ),
+        }
+        for item in transcripts
+    ]
+    return cleaned
+
+
+@app.get("/transcript_by_id/{id}")
+async def get_transcript_by_id(id: str):
+    """Get a single transcript, cleaned for UI display"""
+    try:
+        object_id = ObjectId(id)
+    except:
+        raise HTTPException(status_code=400, detail="Invalid transcript ID format")
+
+    mongo = MongoConnector()
+    transcript_collection = mongo.get_collection("transcripts")
+
+    document = await transcript_collection.find_one({"_id": object_id})
+    if not document:
+        raise HTTPException(status_code=404, detail="Transcript not found")
+
+    # Cleaned response
+    return {
+        "id": str(document["_id"]),
+        "call_id": document.get("call_id"),
+        "timestamp": (
+            document.get("timestamp").isoformat() if document.get("timestamp") else None
+        ),
+        "messages": [
+            {"role": item.get("role"), "text": " ".join(item.get("content", []))}
+            for item in document.get("transcript", {}).get("items", [])
+            if item.get("type") == "message"
+        ],
+    }

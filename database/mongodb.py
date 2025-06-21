@@ -4,8 +4,10 @@ from dotenv import load_dotenv
 
 load_dotenv(dotenv_path=".env.local")
 
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017")
-MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "voice_logs")
+# Default to authenticated connection if no URI provided
+DEFAULT_MONGO_URI = "mongodb://admin:pass123@localhost:27017"
+MONGO_URI = os.getenv("MONGO_URI", DEFAULT_MONGO_URI)
+MONGO_DB_NAME = os.getenv("MONGO_DB_NAME", "transcripts")
 
 
 class MongoConnector:

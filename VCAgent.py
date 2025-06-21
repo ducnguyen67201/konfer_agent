@@ -27,24 +27,23 @@ logger = logging.getLogger(__name__)
 
 
 class VCAgent(Agent):
-    """This agent will act as VC, that will provide feedback to the user also generated the script"""
-
-    # Loading the prompt for VC Agent
-    project_root = Path(__file__).parent.resolve()
-    prompt_path = project_root / "prompt.md"
-    prompt = load_prompt(str(prompt_path))
-
-    def __init__(self, model: str = "gpt-4o-mini"):
+    def __init__(self, prompt: str, model: str = "gpt-4o-mini"):
         super().__init__(
-            instructions=self.prompt,
+            instructions=prompt,
             stt=deepgram.STT(),
             llm=openai.LLM(model=model),
             tts=deepgram.TTS(),
             turn_detection=MultilingualModel(),
         )
 
+    @classmethod
+    async def create(cls, model: str = "gpt-4o-mini"):
+        project_root = Path(__file__).parent.resolve()
+        prompt_path = project_root / "prompt.md"
+        prompt = await load_prompt(str(prompt_path))
+        return cls(prompt=prompt, model=model)
+
     async def on_enter(self):
-        # The agent should be polite and greet the user when it joins :)
         self.session.generate_reply(
             instructions=(
                 "Thank you for coming in today. I’m Alex, a partner at Pinnacle Ventures. "

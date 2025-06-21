@@ -31,7 +31,19 @@ logger = logging.getLogger("voice-agent")
 
 
 def prewarm(proc: JobProcess):
+    from utils.load_prompt import load_prompt
+    from pathlib import Path
+    import asyncio
+
+    # Load VAD
     proc.userdata["vad"] = silero.VAD.load()
+
+    # Load Prompt (Safe for threaded context)
+    project_root = Path(__file__).parent.resolve()
+    prompt_path = project_root / "prompt.md"
+    prompt = asyncio.run(load_prompt(str(prompt_path)))
+
+    proc.userdata["prompt"] = prompt
 
 
 async def entrypoint(ctx: JobContext):
@@ -49,6 +61,8 @@ async def entrypoint(ctx: JobContext):
         metrics.log_metrics(agent_metrics)
         usage_collector.collect(agent_metrics)
 
+    # Getting the prompt for VC Agent from prewarm function
+    vc_prompt = ctx.proc.userdata["prompt"]
     session = AgentSession(
         vad=ctx.proc.userdata["vad"],
         # minimum delay for endpointing, used when turn detector believes the user is done with their turn
@@ -62,7 +76,7 @@ async def entrypoint(ctx: JobContext):
 
     await session.start(
         room=ctx.room,
-        agent=VCAgent(),
+        agent=VCAgent(vc_prompt),
         room_input_options=RoomInputOptions(),
         room_output_options=RoomOutputOptions(transcription_enabled=True),
     )
@@ -91,19 +105,21 @@ async def entrypoint(ctx: JobContext):
             logger.error(f"❌ Failed to write transcript: {e}")
 
         # ? 1.2 Write transcript to MongoDB
-        mongo = MongoConnector()
-        transcript_collection = mongo.get_collection("transcripts")
+        try:
+            mongo = MongoConnector()
+            transcript_collection = mongo.get_collection("transcripts")
 
-        for item in transcript_data["items"]:
-            doc = {
-                "call_id": ctx.room.name,
-                "timestamp": datetime.utcnow(),
-                "role": item.get("role"),
-                "content": " ".join(item.get("content", [])),
-                "interrupted": item.get("interrupted", False),
-                "confidence": item.get("transcript_confidence", None),
-            }
-            await transcript_collection.insert_one(doc)
+            await transcript_collection.insert_one(
+                {
+                    "call_id": ctx.room.name,
+                    "timestamp": datetime.utcnow(),
+                    "transcript": transcript_data,  # ✅ structured dict
+                }
+            )
+        except Exception as e:
+            logger.error(f"❌ Failed to write transcript: {e}")
+
+    print(f"✅ Full transcript for {ctx.room.name} inserted into MongoDB")
 
     ctx.add_shutdown_callback(write_transcript)
 
