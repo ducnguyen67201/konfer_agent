@@ -11,43 +11,23 @@ from livekit.agents import (
     cli,
     metrics,
     RoomInputOptions,
+    RoomOutputOptions,
 )
 from livekit.plugins import (
-    cartesia,
     openai,
     deepgram,
-    noise_cancellation,
     silero,
 )
 from livekit.plugins.turn_detector.multilingual import MultilingualModel
-
+from VCAgent import VCAgent
+from utils.transcript import export_transcript
+from datetime import datetime
+import json
+import os
+from database.mongodb import MongoConnector
 
 load_dotenv(dotenv_path=".env.local")
 logger = logging.getLogger("voice-agent")
-
-
-class Assistant(Agent):
-    def __init__(self) -> None:
-        # This project is configured to use Deepgram STT, OpenAI LLM and Cartesia TTS plugins
-        # Other great providers exist like Cerebras, ElevenLabs, Groq, Play.ht, Rime, and more
-        # Learn more and pick the best one for your app:
-        # https://docs.livekit.io/agents/plugins
-        super().__init__(
-            instructions="You are a voice assistant created by LiveKit. Your interface with users will be voice. "
-            "You should use short and concise responses, and avoiding usage of unpronouncable punctuation. "
-            "You were created as a demo to showcase the capabilities of LiveKit's agents framework.",
-            stt=deepgram.STT(),
-            llm=openai.LLM(model="gpt-4o-mini"),
-            tts=cartesia.TTS(),
-            # use LiveKit's transformer-based turn detector
-            turn_detection=MultilingualModel(),
-        )
-
-    async def on_enter(self):
-        # The agent should be polite and greet the user when it joins :)
-        self.session.generate_reply(
-            instructions="Hey, how can I help you today?", allow_interruptions=True
-        )
 
 
 def prewarm(proc: JobProcess):
@@ -82,13 +62,50 @@ async def entrypoint(ctx: JobContext):
 
     await session.start(
         room=ctx.room,
-        agent=Assistant(),
-        room_input_options=RoomInputOptions(
-            # enable background voice & noise cancellation, powered by Krisp
-            # included at no additional cost with LiveKit Cloud
-            noise_cancellation=noise_cancellation.BVC(),
-        ),
+        agent=VCAgent(),
+        room_input_options=RoomInputOptions(),
+        room_output_options=RoomOutputOptions(transcription_enabled=True),
     )
+
+    """
+    Cleaning up after the session is done
+    """
+
+    # ? 1. Export the transcript of the entire call
+    async def write_transcript():
+        current_date = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+        export_dir = os.path.join(os.getcwd(), "transcripts")
+        transcript_data = session.history.to_dict()
+        os.makedirs(export_dir, exist_ok=True)
+
+        filename = os.path.join(
+            export_dir, f"transcript_{ctx.room.name}_{current_date}.json"
+        )
+
+        try:
+            with open(filename, "w") as f:
+                json.dump(session.history.to_dict(), f, indent=2)
+            print(f"✅ Transcript for {ctx.room.name} saved to {filename}")
+        except Exception as e:
+            logger.error(f"❌ Failed to write transcript: {e}")
+
+        # ? 1.2 Write transcript to MongoDB
+        mongo = MongoConnector()
+        transcript_collection = mongo.get_collection("transcripts")
+
+        for item in transcript_data["items"]:
+            doc = {
+                "call_id": ctx.room.name,
+                "timestamp": datetime.utcnow(),
+                "role": item.get("role"),
+                "content": " ".join(item.get("content", [])),
+                "interrupted": item.get("interrupted", False),
+                "confidence": item.get("transcript_confidence", None),
+            }
+            await transcript_collection.insert_one(doc)
+
+    ctx.add_shutdown_callback(write_transcript)
 
 
 if __name__ == "__main__":

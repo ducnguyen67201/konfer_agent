@@ -1,0 +1,42 @@
+{
+  "items": [
+    {
+      "id": "item_afc7feebea5b",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Hello?"
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.6477051
+    },
+    {
+      "id": "item_69496bf53fd3",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "I"
+      ],
+      "interrupted": true
+    },
+    {
+      "id": "item_7080d8ffb62e",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Testing."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.6221924
+    },
+    {
+      "id": "item_196b7e526afa",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "I didn't receive"
+      ],
+      "interrupted": true
+    }
+  ]
+}
