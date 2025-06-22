@@ -21,6 +21,7 @@ from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 from utils.load_prompt import load_prompt
 from pathlib import Path
+import asyncio
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -44,9 +45,10 @@ class VCAgent(Agent):
         return cls(prompt=prompt, model=model)
 
     async def on_enter(self):
+        await asyncio.sleep(1.0)
         self.session.generate_reply(
             instructions=(
-                "Thank you for coming in today. I’m Alex, a partner at Pinnacle Ventures. "
+                "Thank you for coming in today. I'm Alex, a partner at Pinnacle Ventures. "
                 "Please go ahead with your pitch — I may ask a few questions along the way."
             ),
             allow_interruptions=True,

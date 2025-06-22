@@ -13,3 +13,7 @@ pyyaml>=6.0.1
 grpcio>=1.73.0
 protobuf>=6.0.0
 jinja2>=3.1.0
+cohere-python>=4.37
+aiohttp>=3.9.1
+motor>=3.3.2
+pymongo>=4.6.1

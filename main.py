@@ -6,6 +6,7 @@ import os
 import json
 from database.mongodb import MongoConnector
 from bson import json_util, ObjectId
+from datetime import datetime
 
 load_dotenv(dotenv_path=".env.local")
 
@@ -82,9 +83,22 @@ async def test_transcript(room_name: str = Query(...), transcript: dict = Body(.
         room_name: The name of the room for the transcript
         transcript: The transcript data to store
     """
+    print(f"Storing transcript for room: {room_name}")  # Debug log
     mongo = MongoConnector()
     transcript_collection = mongo.get_collection("transcripts")
+
+    # Add timestamp if not present
+    if "timestamp" not in transcript:
+        transcript["timestamp"] = datetime.utcnow()
+
     result = await transcript_collection.insert_one(transcript)
+    inserted_id = result.inserted_id
+    print(f"Inserted document with ID: {inserted_id}")  # Debug log
+
+    # Verify the document was stored
+    stored_doc = await transcript_collection.find_one({"_id": inserted_id})
+    print(f"Retrieved document with ID: {stored_doc.get('_id')}")  # Debug log
+
     return {"message": "Transcript endpoint is working", "id": str(result.inserted_id)}
 
 
@@ -140,3 +154,31 @@ async def get_transcript_by_id(id: str):
             if item.get("type") == "message"
         ],
     }
+
+
+@app.get("/analysis-result")
+async def get_transcript_analysis_by_room(room: str):
+    """Get the analysis for a specific transcript by room name via query parameter"""
+    mongo = MongoConnector()
+    transcript_collection = mongo.get_collection("transcript_analysis")
+
+    document = await transcript_collection.find_one({"call_id": room})
+    if not document:
+        raise HTTPException(status_code=404, detail="Transcript analysis not found")
+
+    # Convert ObjectId to string before returning
+    if "_id" in document:
+        document["_id"] = str(document["_id"])
+
+    # Convert any other ObjectId fields that might be nested in the document
+    def convert_objectid(obj):
+        if isinstance(obj, dict):
+            return {k: convert_objectid(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [convert_objectid(item) for item in obj]
+        elif isinstance(obj, ObjectId):
+            return str(obj)
+        return obj
+
+    document = convert_objectid(document)
+    return document

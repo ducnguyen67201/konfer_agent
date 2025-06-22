@@ -1,0 +1,108 @@
+{
+  "items": [
+    {
+      "id": "item_2348519f981c",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "I didn\u2019t receive a clear pitch to evaluate. Please deliver your pitch"
+      ],
+      "interrupted": true
+    },
+    {
+      "id": "item_1afd12acef06",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Oh,"
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.74194336
+    },
+    {
+      "id": "item_c218056ecd04",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "I didn\u2019t receive a"
+      ],
+      "interrupted": true
+    },
+    {
+      "id": "item_20f2017e3448",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Alright."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.7102051
+    },
+    {
+      "id": "item_73cfd68a3ebf",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Thank you for"
+      ],
+      "interrupted": true
+    },
+    {
+      "id": "item_fd1775f4ff23",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Okay."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.8876953
+    },
+    {
+      "id": "item_5c278180c5f7",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Thank you for"
+      ],
+      "interrupted": true
+    },
+    {
+      "id": "item_a3f84edccfb0",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Hi. Okay. Testing."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.8486328
+    },
+    {
+      "id": "item_8c69529fba02",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Thank you for coming"
+      ],
+      "interrupted": true
+    },
+    {
+      "id": "item_e96cc8f45392",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Hi."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.9916992
+    },
+    {
+      "id": "item_f7ac6ac0b014",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "Thank you for coming in today. I\u2019m PitchPerfect AI, a partner at VentureVision Capital. Please go ahead with your pitch, and I may have a few questions along the way."
+      ],
+      "interrupted": false
+    }
+  ]
+}

@@ -1,0 +1,72 @@
+{
+  "items": [
+    {
+      "id": "item_f021d3481c87",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "I didn\u2019t receive a clear pitch to evaluate. Please deliver your pitch verbally, and I\u2019ll"
+      ],
+      "interrupted": true
+    },
+    {
+      "id": "item_ee707f097c99",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "Okay. Sure."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.97094727
+    },
+    {
+      "id": "item_3ddc9e08ea1c",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "This is Alright. So our product is selling?"
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.983642575
+    },
+    {
+      "id": "item_8d6f31c0a068",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "1 k per month."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.8730469
+    },
+    {
+      "id": "item_717f19762072",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "So I agree. I I but I do think there's some this center."
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.709350575
+    },
+    {
+      "id": "item_bdae1e645c1d",
+      "type": "message",
+      "role": "user",
+      "content": [
+        "I If if the environment's too loud, is it is this constantly"
+      ],
+      "interrupted": false,
+      "transcript_confidence": 0.7631836
+    },
+    {
+      "id": "item_8618c3b022a2",
+      "type": "message",
+      "role": "assistant",
+      "content": [
+        "It seems like we're having some trouble with the clarity of your pitch. If you could start from the top and present the key points about your startup\u2014like"
+      ],
+      "interrupted": true
+    }
+  ]
+}
