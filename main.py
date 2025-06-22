@@ -126,34 +126,34 @@ async def get_all_transcripts():
     return cleaned
 
 
-@app.get("/transcript_by_id/{id}")
-async def get_transcript_by_id(id: str):
-    """Get a single transcript, cleaned for UI display"""
-    try:
-        object_id = ObjectId(id)
-    except:
-        raise HTTPException(status_code=400, detail="Invalid transcript ID format")
+# @app.get("/transcript_by_id/{id}")
+# async def get_transcript_by_id(id: str):
+#     """Get a single transcript, cleaned for UI display"""
+#     try:
+#         object_id = ObjectId(id)
+#     except:
+#         raise HTTPException(status_code=400, detail="Invalid transcript ID format")
 
-    mongo = MongoConnector()
-    transcript_collection = mongo.get_collection("transcripts")
+#     mongo = MongoConnector()
+#     transcript_collection = mongo.get_collection("transcripts")
 
-    document = await transcript_collection.find_one({"_id": object_id})
-    if not document:
-        raise HTTPException(status_code=404, detail="Transcript not found")
+#     document = await transcript_collection.find_one({"_id": object_id})
+#     if not document:
+#         raise HTTPException(status_code=404, detail="Transcript not found")
 
-    # Cleaned response
-    return {
-        "id": str(document["_id"]),
-        "call_id": document.get("call_id"),
-        "timestamp": (
-            document.get("timestamp").isoformat() if document.get("timestamp") else None
-        ),
-        "messages": [
-            {"role": item.get("role"), "text": " ".join(item.get("content", []))}
-            for item in document.get("transcript", {}).get("items", [])
-            if item.get("type") == "message"
-        ],
-    }
+#     # Cleaned response
+#     return {
+#         "id": str(document["_id"]),
+#         "call_id": document.get("call_id"),
+#         "timestamp": (
+#             document.get("timestamp").isoformat() if document.get("timestamp") else None
+#         ),
+#         "messages": [
+#             {"role": item.get("role"), "text": " ".join(item.get("content", []))}
+#             for item in document.get("transcript", {}).get("items", [])
+#             if item.get("type") == "message"
+#         ],
+#     }
 
 
 @app.get("/analysis-result")
