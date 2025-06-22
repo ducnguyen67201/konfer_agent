@@ -45,8 +45,8 @@ class VCAgent(Agent):
         return cls(prompt=prompt, model=model)
 
     async def on_enter(self):
-        await asyncio.sleep(1.0)
-        self.session.generate_reply(
+        await asyncio.sleep(0.5)
+        await self.session.generate_reply(
             instructions=(
                 "Thank you for coming in today. I'm Alex, a partner at Pinnacle Ventures. "
                 "Please go ahead with your pitch — I may ask a few questions along the way."
