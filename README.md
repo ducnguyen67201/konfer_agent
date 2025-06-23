@@ -1,72 +1,28 @@
-<a href="https://livekit.io/">
-  <img src="./.github/assets/livekit-mark.png" alt="LiveKit logo" width="100" height="100">
-</a>
+Glimpse Voice Agent
+Glimpse is a Python voice agent built on LiveKit Agents.
+It listens to a founder’s spoken pitch, uses an LLM to respond like a seasoned VC partner, and speaks its replies back in real time.
 
-# Python Voice Agent
+Environment setup (.env.local)
+Create a file named .env.local in the project root and add the keys you obtained from the respective services:
 
-<p>
-  <a href="https://cloud.livekit.io/projects/p_/sandbox"><strong>Deploy a sandbox app</strong></a>
-  •
-  <a href="https://docs.livekit.io/agents/overview/">LiveKit Agents Docs</a>
-  •
-  <a href="https://livekit.io/cloud">LiveKit Cloud</a>
-  •
-  <a href="https://blog.livekit.io/">Blog</a>
-</p>
+env
+Copy
+Edit
+# LiveKit server
+LIVEKIT_URL=https://your-livekit-server
+LIVEKIT_API_KEY=lk_api_key
+LIVEKIT_API_SECRET=lk_api_secret
 
-A basic example of a voice agent using LiveKit and Python.
+# OpenAI (LLM)
+OPENAI_API_KEY=sk-...
 
-## Dev Setup
+# Deepgram (STT + TTS)
+DEEPGRAM_API_KEY=dg_...
 
-Clone the repository and install dependencies to a virtual environment:
+# Optional – if you enabled additional plugins
+# CARTESIA_API_KEY=...
+That’s it—run the agent with python agent.py console (local mic) or python agent.py dev (with a LiveKit web frontend).
 
-```console
-# Linux/macOS
-cd voice-pipeline-agent-python
-python3 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
-python3 agent.py download-files
-```
+![image](https://github.com/user-attachments/assets/28bdf02d-65e8-47d1-9952-3255eff5d332)
 
-<details>
-  <summary>Windows instructions (click to expand)</summary>
-  
-```cmd
-:: Windows (CMD/PowerShell)
-cd voice-pipeline-agent-python
-python3 -m venv venv
-venv\Scripts\activate
-pip install -r requirements.txt
-```
-
-</details>
-
-Set up the environment by copying `.env.example` to `.env.local` and filling in the required values:
-
-- `LIVEKIT_URL`
-- `LIVEKIT_API_KEY`
-- `LIVEKIT_API_SECRET`
-- `OPENAI_API_KEY`
-- `CARTESIA_API_KEY`
-- `DEEPGRAM_API_KEY`
-
-You can also do this automatically using the LiveKit CLI:
-
-```console
-lk app env
-```
-
-Run the agent:
-
-```console
-python3 agent.py console
-```
-
-This agent can use a frontend application to communicate with. You can use one of our example frontends in [livekit-examples](https://github.com/livekit-examples/), create your own following one of our [client quickstarts](https://docs.livekit.io/realtime/quickstarts/), or test instantly against one of our hosted [Sandbox](https://cloud.livekit.io/projects/p_/sandbox) frontends.
-
-Run the agent with the following command when using a frontend application.
-
-```console
-python3 agent.py dev
-```
+![image](https://github.com/user-attachments/assets/bb4aa2e5-c121-48c3-b55b-24e003cb395f)
