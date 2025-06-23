@@ -1,26 +1,24 @@
+# Specify Python version for compatibility
+python_version >=3.10, <3.12
+
 # LiveKit core & agent packages
-livekit==1.0.9
-livekit-agents[openai,silero,deepgram,turn-detector]==1.1.3
+livekit>=1.0.9
+livekit-agents[openai,silero,deepgram,turn-detector]>=1.1.1,<2.0.0
 types-protobuf<5
 
 # FastAPI backend
-fastapi==0.110.1
-uvicorn==0.29.0
+fastapi>=0.100.0
+uvicorn>=0.20.0
 
 # General dependencies
-python-dotenv==1.0.0
-av==14.0.0
-cachetools==6.0.0
-pyyaml==6.0.1
-grpcio==1.73.0
-protobuf==6.0.0
-jinja2==3.1.0
-aiohttp==3.9.1
-loguru==0.7.2
-
-# MongoDB
-motor==3.3.2
-pymongo==4.6.1
-
-# Cohere AI
-cohere-python==4.3.1
+python-dotenv~=1.0
+av>=14.0.0
+cachetools>=6.0.0
+pyyaml>=6.0.1
+grpcio>=1.73.0
+protobuf>=4.25.3
+jinja2>=3.1.0
+cohere-python>=4.3.1
+aiohttp>=3.9.1
+motor>=3.3.2
+pymongo>=4.6.1
