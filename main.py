@@ -29,6 +29,11 @@ app.add_middleware(
 )
 
 
+@app.get("/healthz")
+async def healthz():
+    return {"status": "ok"}
+
+
 @app.get("/get-token")
 async def get_token(identity: str = Query(...), room: str = Query(...)):
     token = (
