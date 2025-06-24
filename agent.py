@@ -18,7 +18,6 @@ from livekit.plugins import (
     deepgram,
     silero,
 )
-from livekit.plugins.turn_detector.multilingual import MultilingualModel
 from VCAgent import VCAgent
 from utils.transcript import export_transcript
 from datetime import datetime
