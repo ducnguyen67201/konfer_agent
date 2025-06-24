@@ -34,7 +34,6 @@ class VCAgent(Agent):
             stt=deepgram.STT(),
             llm=openai.LLM(model=model),
             tts=deepgram.TTS(),
-            turn_detection=MultilingualModel(),
         )
 
     @classmethod
