@@ -168,7 +168,36 @@ async def entrypoint(ctx: JobContext):
     ctx.add_shutdown_callback(lambda: asyncio.create_task(cleanup()))
 
 
+import sys
+from huggingface_hub import hf_hub_download
+
+
+def download_files():
+    print("Downloading Turn Detector model...")
+    hf_hub_download(
+        repo_id="livekit/turn-detector",
+        revision="v0.2.0-intl",
+        filename="config.json",
+        local_dir="./models/turn_detector",
+    )
+
+    hf_hub_download(
+        repo_id="livekit/turn-detector",
+        revision="v0.2.0-intl",
+        filename="model.onnx",
+        local_dir="./models/turn_detector",
+    )
+
+    print("Model download complete.")
+
+
 if __name__ == "__main__":
+    if len(sys.argv) > 1 and sys.argv[1] == "download-files":
+        download_files()
+    elif len(sys.argv) > 1 and sys.argv[1] == "start":
+        # Your existing start logic
+        pass
+
     cli.run_app(
         WorkerOptions(
             entrypoint_fnc=entrypoint,
