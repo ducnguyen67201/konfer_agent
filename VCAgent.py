@@ -17,7 +17,6 @@ from livekit.plugins import (
     deepgram,
     silero,
 )
-from livekit.plugins.turn_detector.multilingual import MultilingualModel
 
 from utils.load_prompt import load_prompt
 from pathlib import Path
